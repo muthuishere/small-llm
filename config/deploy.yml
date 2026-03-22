@@ -1,0 +1,47 @@
+# Name of your application. Used to uniquely configure containers.
+service: small-llm
+
+# Container image (pushed to your registry on deploy).
+image: <%= ENV["REGISTRY_USERNAME"] %>/small-llm
+
+# Deploy to these servers.
+servers:
+  web:
+    - <%= ENV["WEB_SERVER_IP"] %>
+
+# Proxy / SSL via kamal-proxy (Let's Encrypt).
+proxy:
+  ssl: true
+  host: <%= ENV["APP_DOMAIN"] %>
+  # The Go backend listens on 8080
+  app_port: 8080
+
+# Container registry credentials.
+registry:
+  server: <%= ENV["REGISTRY_SERVER"] %>
+  username: <%= ENV["REGISTRY_USERNAME"] %>
+  password:
+    - REGISTRY_PASSWORD
+
+# Build configuration.
+builder:
+  arch: amd64
+
+# Environment variables injected into the running container.
+env:
+  clear:
+    PORT: "8080"
+  secret:
+    - SECRET_KEY
+
+# Persistent volume for the cached model + llama-server binary.
+# Maps to ~/.small-llm inside the container (which is /home/app/.small-llm).
+volumes:
+  - small-llm-models:/home/app/.small-llm
+
+# Health check – waits for /api/health to return 200 before switching traffic.
+healthcheck:
+  path: /api/health
+  port: 8080
+  max_attempts: 20
+  interval: 5s

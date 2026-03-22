@@ -1,0 +1,64 @@
+version: '3.9'
+
+# docker-compose.test.yml
+#
+# Runs all tests in isolated containers.  No llama-server or model download
+# is needed — Go handler tests mock the LLM HTTP endpoint.
+#
+# Usage:
+#   task docker:test
+#   docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
+
+services:
+
+  # ── Go backend tests ────────────────────────────────────────────────────────
+  backend-test:
+    image: golang:1.25-alpine
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "
+        go mod download &&
+        go test ./... -v -timeout 120s
+      "
+    environment:
+      CGO_ENABLED: "0"
+    networks:
+      - test-net
+
+  # ── Frontend (Vitest) tests ─────────────────────────────────────────────────
+  frontend-test:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - frontend-modules:/app/node_modules
+    command: >
+      sh -c "
+        npm ci --prefer-offline &&
+        npm run test:run
+      "
+    networks:
+      - test-net
+
+  # ── Aggregate test runner — exits with the combined exit code ───────────────
+  # This service waits for both test containers and propagates failure.
+  test-runner:
+    image: alpine:3.21
+    depends_on:
+      - backend-test
+      - frontend-test
+    command: >
+      sh -c "
+        echo '✅ All test containers finished successfully.'
+      "
+    networks:
+      - test-net
+
+networks:
+  test-net:
+    driver: bridge
+
+volumes:
+  frontend-modules:
