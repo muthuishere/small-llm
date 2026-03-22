@@ -1,5 +1,157 @@
 # small-llm
 
+A full-stack local LLM application powered by **Qwen 2.5 0.5B (GGUF q4)** — available in two modes:
+
+| Mode | Runtime | Where inference runs |
+|---|---|---|
+| **Server** (`/server`) | Go backend → llama.cpp | Your machine's CPU/GPU |
+| **Browser** (`/browser`) | React → WebLLM (WebGPU) | In the browser tab itself |
+
+Both modes support **chat**, **structured output (JSON extraction)**, and **tool-augmented chat**.
+
+## Architecture
+
+```
+           ┌──────────────────────────────────┐
+           │   React Frontend (Vite)          │
+           │   http://localhost:5173          │
+           │                                  │
+           │   /         Landing page         │
+           │   /server   ─── Go API ────────► Go backend :8080
+           │   /browser  ─── WebLLM ────────► In-browser (WebGPU)
+           └──────────────────────────────────┘
+                              │
+                    Go backend :8080
+                              │ subprocess
+                    llama-server :8081
+                              │
+                    ~/.small-llm/models/qwen2.5-0.5b-instruct-q4_k_m.gguf
+```
+
+## Prerequisites
+
+- Go 1.25+
+- Node.js 18+ / npm
+- [Task](https://taskfile.dev) (`brew install go-task` / `go install github.com/go-task/task/v3/cmd/task@latest`)
+- ~500 MB free disk space (model + binary, cached in `~/.small-llm/`)
+
+> **Browser mode** additionally requires a browser with WebGPU support (Chrome 113+, Edge 113+).
+
+## Quick Start
+
+```bash
+# Install frontend deps (first time only)
+task install
+
+# Start both backend + frontend in parallel
+task
+```
+
+Or start individually:
+
+```bash
+task backend    # Go server (downloads model + llama-server on first run)
+task frontend   # React dev server → http://localhost:5173
+```
+
+Open [http://localhost:5173](http://localhost:5173) and choose a mode.
+
+## Taskfile Commands
+
+```bash
+task               # Start backend + frontend (dev)
+task install       # npm install for frontend
+task build         # Build backend binary + frontend bundle
+task test          # Run Go unit tests
+task tidy          # go mod tidy
+task clean         # Remove build artefacts
+```
+
+---
+
+## Routes
+
+### `GET /` — Landing page
+Choose between Server mode and Browser mode.
+
+### `GET /server` — Server mode
+Uses the Go backend API. Three endpoint sub-modes available in the sidebar:
+- **Chat** — conversational chat with history
+- **Structured Output** — strict JSON extraction (schema + few-shot examples)
+- **Chat with Tools** — calculator, datetime, weather tools
+
+### `GET /browser` — Browser mode
+Downloads Qwen 0.5B into the browser via WebLLM once and caches it. Same three sub-modes as Server mode — no Go backend required.
+
+---
+
+## Backend API Reference
+
+### `GET /api/health`
+Returns `200 OK` when the server is up.
+
+### `GET /api/status`
+```json
+{
+  "model_downloaded": true,
+  "server_running": true,
+  "model_name": "qwen2.5-0.5b",
+  "model_path": "/home/user/.small-llm/models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
+  "server_url": "http://127.0.0.1:8081"
+}
+```
+
+### `POST /api/chat`
+```json
+// Request
+{ "message": "Hello!", "history": [], "context": "You are helpful." }
+// Response
+{ "response": "Hi there!", "tokens_used": 42, "model": "qwen2.5-0.5b" }
+```
+
+### `POST /api/chatwithobject`
+Strict JSON-only prompting + few-shot examples → structured extraction.
+```json
+// Request
+{
+  "message": "John Smith, 34, engineer at Google",
+  "schema": {"name":"string","age":"number","company":"string"},
+  "few_shot_examples": [
+    {"input":"Alice, 28, OpenAI","output":{"name":"Alice","age":28,"company":"OpenAI"}}
+  ]
+}
+// Response
+{ "result": {"name":"John Smith","age":34,"company":"Google"}, "tokens_used": 112 }
+```
+
+### `POST /api/chatwithtools`
+Tool-augmented chat. Available tools: `calculator`, `datetime`, `weather`.
+```json
+// Request
+{ "message": "What is 15*7 and today's date?", "tools": ["calculator","datetime"] }
+// Response
+{
+  "response": "15×7 = 105. Today is 2026-03-22.",
+  "tool_calls": [
+    {"tool":"calculator","input":"15*7","output":"105"},
+    {"tool":"datetime","input":"","output":"Date: 2026-03-22, Time: 07:32:25 UTC"}
+  ],
+  "tokens_used": 143
+}
+```
+
+---
+
+## Model
+
+| Property | Value |
+|---|---|
+| Model | Qwen 2.5 0.5B Instruct |
+| Server quantization | Q4_K_M (GGUF, ~394 MB) |
+| Browser quantization | q4f32_1-MLC (WebLLM cache) |
+| Runtime (server) | llama.cpp `llama-server` |
+| Runtime (browser) | `@mlc-ai/web-llm` + WebGPU |
+
 A full-stack local LLM application powered by **Qwen 2.5 0.5B (GGUF q4)** via **llama.cpp**, with a Go backend API and React frontend.
 
 ## Architecture

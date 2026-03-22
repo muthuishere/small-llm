@@ -2,15 +2,28 @@ import { useRef, useEffect, useState } from 'react';
 import { Send, Trash2, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import useChatStore from '../store/chatStore';
-import { sendChat, sendChatWithObject, sendChatWithTools } from '../services/api';
 import { ChatMessage } from './ChatMessage';
 import { Button } from './ui/Button';
 import { Spinner } from './ui/Spinner';
 
-export function Chat() {
-  const { messages, mode, selectedTools, schema, fewShotExamples, context, isLoading, addMessage, clearMessages, setLoading } = useChatStore();
+/**
+ * Chat — main chat panel.
+ *
+ * @param {{
+ *   callbacks: {
+ *     chat:   (text, history, context) => Promise<{response, tokens_used}>,
+ *     object: (text, schema, fewShot)  => Promise<{result, raw_response, tokens_used}>,
+ *     tools:  (text, tools, context)   => Promise<{response, tool_calls, tokens_used}>,
+ *   }
+ * }} props
+ */
+export function Chat({ callbacks }) {
+  const {
+    messages, mode, selectedTools, schema, fewShotExamples, context,
+    isLoading, addMessage, clearMessages, setLoading,
+  } = useChatStore();
   const [input, setInput] = useState('');
-  const bottomRef = useRef(null);
+  const bottomRef   = useRef(null);
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -29,26 +42,22 @@ export function Chat() {
     setLoading(true);
 
     try {
-      let response;
       if (mode === 'chat') {
-        response = await sendChat(text, buildHistory(), context);
-        const data = response.data;
+        const data = await callbacks.chat(text, buildHistory(), context);
         addMessage({
           role: 'assistant',
           content: data.response || data.message || JSON.stringify(data),
           type: 'text',
         });
       } else if (mode === 'object') {
-        response = await sendChatWithObject(text, schema, fewShotExamples);
-        const data = response.data;
+        const data = await callbacks.object(text, schema, fewShotExamples);
         addMessage({
           role: 'assistant',
           content: data.result ?? data.response ?? data,
           type: 'json',
         });
       } else if (mode === 'tools') {
-        response = await sendChatWithTools(text, selectedTools, context);
-        const data = response.data;
+        const data = await callbacks.tools(text, selectedTools, context);
         addMessage({
           role: 'assistant',
           content: data.response || data.message || JSON.stringify(data),
@@ -87,9 +96,9 @@ export function Chat() {
         <div>
           <h2 className="font-semibold text-[var(--foreground)]">{modeLabels[mode]}</h2>
           <p className="text-xs text-[var(--muted-foreground)]">
-            {mode === 'chat' && 'Conversational chat'}
+            {mode === 'chat'   && 'Conversational chat'}
             {mode === 'object' && 'Returns structured JSON objects'}
-            {mode === 'tools' && `Tools: ${selectedTools.join(', ') || 'none selected'}`}
+            {mode === 'tools'  && `Tools: ${selectedTools.join(', ') || 'none selected'}`}
           </p>
         </div>
         <div className="flex gap-2">
@@ -112,7 +121,8 @@ export function Chat() {
           <div className="flex flex-col items-center justify-center h-full text-center text-[var(--muted-foreground)]">
             <div className="w-16 h-16 rounded-full bg-[var(--surface-elevated)] flex items-center justify-center mb-4">
               <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
             <p className="font-medium">Start a conversation</p>
@@ -151,7 +161,7 @@ export function Chat() {
               e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
             }}
             onKeyDown={handleKeyDown}
-            placeholder={`Message${mode === 'tools' ? ' (AI will use selected tools)' : ''}... (Enter to send, Shift+Enter for newline)`}
+            placeholder={`Message${mode === 'tools' ? ' (AI will use selected tools)' : ''}… (Enter to send, Shift+Enter for newline)`}
             disabled={isLoading}
             rows={1}
             className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none overflow-hidden transition-colors disabled:opacity-50"
@@ -173,3 +183,4 @@ export function Chat() {
     </div>
   );
 }
+
