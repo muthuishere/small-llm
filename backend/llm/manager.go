@@ -33,6 +33,21 @@ type Manager struct {
 	cmd    *exec.Cmd
 }
 
+// NewManagerForTest creates a minimal Manager for use in handler tests.
+// It bypasses model/binary download and llama-server startup, pointing the
+// internal HTTP client directly at the provided base URL (e.g. an httptest server).
+func NewManagerForTest(llamaBaseURL string) *Manager {
+	return &Manager{
+		client: NewClient(llamaBaseURL),
+		status: Status{
+			ModelDownloaded: true,
+			ServerRunning:   true,
+			ModelName:       "test-model",
+			ServerURL:       llamaBaseURL,
+		},
+	}
+}
+
 // NewManager creates a new Manager with the given config.
 func NewManager(cfg *config.Config) *Manager {
 	return &Manager{

@@ -2,6 +2,9 @@ version: '3'
 
 # Run `task` (or `task dev`) to start both backend and frontend in parallel.
 # Requires: https://taskfile.dev
+# Deploy requires: https://kamal-deploy.org
+
+dotenv: ['.env']
 
 vars:
   BACKEND_DIR: backend
@@ -59,14 +62,46 @@ tasks:
     cmds:
       - go test ./...
 
+  test:frontend:
+    desc: "Run frontend Vitest unit tests"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - npm run test:run
+
+  test:all:
+    desc: "Run all tests (backend unit + frontend unit)"
+    deps: [test, test:frontend]
+
+  docker:test:
+    desc: "Run all tests inside Docker containers (no local runtime required)"
+    cmds:
+      - docker compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from test-runner
+      - docker compose -f docker-compose.test.yml down --volumes
+
   tidy:
     desc: "Tidy Go modules"
     dir: "{{.BACKEND_DIR}}"
     cmds:
       - go mod tidy
 
+  deploy:
+    desc: "Deploy to production server via Kamal"
+    cmds:
+      - kamal deploy
+
+  deploy:setup:
+    desc: "First-time Kamal infrastructure setup (creates volumes, proxy, etc.)"
+    cmds:
+      - kamal setup
+
+  deploy:logs:
+    desc: "Tail production container logs"
+    cmds:
+      - kamal app logs
+
   clean:
     desc: "Remove build artefacts"
     cmds:
       - rm -rf {{.BACKEND_DIR}}/bin
       - rm -rf {{.FRONTEND_DIR}}/dist
+
