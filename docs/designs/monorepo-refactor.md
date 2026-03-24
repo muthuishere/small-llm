@@ -104,7 +104,7 @@ answer, _ := ai.Ask(ctx, "find cheapest laptop")       // auto-invokes registere
 
 // Interface for testability
 type Completer interface {
-    Complete(messages []ChatMessage, maxTokens int, temp float64) (*Response, error)
+    Complete(messages []ChatMessage, maxTokens int, temp float64) (*ChatResponse, error)
     CompleteStream(messages []ChatMessage, maxTokens int, temp float64, cb func(string)) error
 }
 
@@ -127,7 +127,7 @@ const { call, result, availableTools } = useTools({ search: { description: "Sear
 </LLMProvider>
 
 // Browser models map to MLC model IDs internally:
-// models.Qwen2_5_0_5B → "Qwen2.5-0.5B-Instruct-q4f16_1-MLC"
+// models.Qwen2_5_0_5B → "Qwen2.5-0.5B-Instruct-q4f32_1-MLC"
 ```
 
 ## CEO Review Findings (Sections 1-10)
@@ -183,11 +183,11 @@ SKIPPED — library has no UI.
 - Windows ARM support for llama.cpp binary
 
 ## What already exists
-- `llm/client.go` — HTTP client to llama-server. Moves to `go/llm/` as-is. ✅
-- `llm/prompts.go` — Prompt building. Moves as-is. ✅
-- `llm/downloader.go` — Model + binary download. Moves with JSON parsing fix.
-- `llm/manager.go` — Lifecycle management. Core of new library, needs config decoupling.
-- `tools/tools.go` — Tool registry with search/calculator. Moves as-is, extended with RegisterTool.
+- `backend/llm/client.go` — HTTP client to llama-server. Moves to `go/llm/` as-is. ✅
+- `backend/llm/prompts.go` — Prompt building. Moves as-is. ✅
+- `backend/llm/downloader.go` — Model + binary download. Moves with JSON parsing fix.
+- `backend/llm/manager.go` — Lifecycle management. Core of new library, needs config decoupling.
+- `backend/tools/tools.go` — Tool registry with calculator/datetime/weather. Moves as-is, extended with RegisterTool.
 - `frontend/src/services/webllm.js` — WebLLM integration. Basis for React hooks.
 - `frontend/src/store/chatStore.js` — Zustand store. Stays in example app (app-specific).
 
