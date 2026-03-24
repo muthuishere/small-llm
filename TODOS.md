@@ -2,18 +2,6 @@
 
 ## Library Extraction
 
-### Fix downloader.go JSON parsing
-
-**What:** Replace `strings.Index`-based JSON parsing in `downloader.go` with `json.Unmarshal` into typed structs.
-
-**Why:** The only code quality anti-pattern in the codebase. Fragile — any HuggingFace API response format change breaks it silently.
-
-**Context:** During the monorepo extraction, `backend/llm/downloader.go` moves to `go/llm/downloader.go`. Fix the ~15 lines of string manipulation with proper struct deserialization at that point. Zero risk, pure improvement.
-
-**Effort:** XS
-**Priority:** P1
-**Depends on:** Part of v0.1.0 extraction work
-
 ### Go HTTP Middleware
 
 **What:** Create `smallllm.Middleware()` that adds AI capabilities to any Go HTTP server via `router.Use()`.
@@ -65,3 +53,9 @@
 **Depends on:** v0.1.0 shipped
 
 ## Completed
+
+### Fix downloader.go JSON parsing ✅
+
+**What:** Replaced `strings.Index`-based JSON parsing in `downloader.go` with `json.Unmarshal` into typed structs.
+
+**Where:** Fixed in both `backend/llm/downloader.go` and the new `go/llm/downloader.go` library.

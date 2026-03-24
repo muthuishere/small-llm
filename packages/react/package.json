@@ -1,0 +1,28 @@
+{
+  "name": "@small-llm/react",
+  "version": "0.1.0",
+  "description": "React hooks and components for local LLM inference — browser (WebLLM) and server (Go backend) modes",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "keywords": ["llm", "react", "hooks", "webllm", "local-ai", "tool-calling"],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@mlc-ai/web-llm": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "jsdom": "^24.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vitest": "^2.0.0"
+  }
+}

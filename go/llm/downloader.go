@@ -5,82 +5,82 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
 )
 
-// DownloadFile downloads a URL to destPath, showing progress.
-func DownloadFile(url, destPath string) error {
+// DownloadFile downloads url to destPath, updating a progress counter.
+// An optional progressFn receives (downloaded, total) byte counts on each
+// write; pass nil to suppress progress output.
+func DownloadFile(url, destPath string, progressFn func(downloaded, total int64)) error {
 	if err := os.MkdirAll(filepath.Dir(destPath), 0755); err != nil {
-		return fmt.Errorf("mkdir: %w", err)
+		return fmt.Errorf("%w: mkdir: %v", ErrStorage, err)
 	}
 
 	tmp := destPath + ".tmp"
 	out, err := os.Create(tmp)
 	if err != nil {
-		return fmt.Errorf("create tmp: %w", err)
+		return fmt.Errorf("%w: create tmp: %v", ErrStorage, err)
 	}
 	defer out.Close()
 
 	resp, err := http.Get(url) //nolint:gosec
 	if err != nil {
-		return fmt.Errorf("GET %s: %w", url, err)
+		return fmt.Errorf("%w: GET %s: %v", ErrModelDownload, url, err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status %d for %s", resp.StatusCode, url)
+		return fmt.Errorf("%w: unexpected status %d for %s", ErrModelDownload, resp.StatusCode, url)
 	}
 
 	total := resp.ContentLength
-	counter := &writeCounter{total: total}
+	counter := &writeCounter{total: total, fn: progressFn}
 	if _, err = io.Copy(out, io.TeeReader(resp.Body, counter)); err != nil {
 		if removeErr := os.Remove(tmp); removeErr != nil {
-			log.Printf("Failed to remove tmp file %s: %v", tmp, removeErr)
+			slog.Warn("failed to remove tmp file", "path", tmp, "err", removeErr)
 		}
-		return fmt.Errorf("download: %w", err)
+		return fmt.Errorf("%w: download: %v", ErrModelDownload, err)
 	}
 	out.Close()
 
 	if err := os.Rename(tmp, destPath); err != nil {
-		return fmt.Errorf("rename: %w", err)
+		return fmt.Errorf("%w: rename: %v", ErrStorage, err)
 	}
-	fmt.Println() // newline after progress
 	return nil
 }
 
 type writeCounter struct {
 	n     int64
 	total int64
+	fn    func(int64, int64)
 }
 
 func (wc *writeCounter) Write(p []byte) (int, error) {
 	n := len(p)
 	wc.n += int64(n)
-	if wc.total > 0 {
-		pct := float64(wc.n) / float64(wc.total) * 100
-		fmt.Printf("\r  %.1f%% (%d / %d bytes)", pct, wc.n, wc.total)
-	} else {
-		fmt.Printf("\r  %d bytes downloaded", wc.n)
+	if wc.fn != nil {
+		wc.fn(wc.n, wc.total)
 	}
 	return n, nil
 }
 
-// DownloadLlamaServer downloads the llama-server binary for the current platform.
-func DownloadLlamaServer(destPath string) error {
+// DownloadLlamaServer downloads the llama-server binary for the current
+// platform from the latest ggml-org/llama.cpp GitHub release.
+func DownloadLlamaServer(destPath string, progressFn func(downloaded, total int64)) error {
 	tag, zipName, err := resolveLlamaRelease()
 	if err != nil {
 		return err
 	}
 
 	zipURL := fmt.Sprintf("https://github.com/ggml-org/llama.cpp/releases/download/%s/%s", tag, zipName)
-	log.Printf("Downloading llama-server from %s", zipURL)
+	slog.Info("downloading llama-server", "url", zipURL)
 
 	tmpZip := destPath + ".zip"
-	if err := DownloadFile(zipURL, tmpZip); err != nil {
+	if err := DownloadFile(zipURL, tmpZip, progressFn); err != nil {
 		return fmt.Errorf("download zip: %w", err)
 	}
 	defer os.Remove(tmpZip)
@@ -97,25 +97,33 @@ func resolveLlamaRelease() (tag, zipName string, err error) {
 		return
 	}
 
-	os_ := runtime.GOOS
+	goos := runtime.GOOS
 	arch := runtime.GOARCH
 
 	switch {
-	case os_ == "linux" && arch == "amd64":
+	case goos == "linux" && arch == "amd64":
 		zipName = fmt.Sprintf("llama-%s-bin-ubuntu-x64.zip", tag)
-	case os_ == "darwin" && arch == "arm64":
+	case goos == "darwin" && arch == "arm64":
 		zipName = fmt.Sprintf("llama-%s-bin-macos-arm64.zip", tag)
-	case os_ == "darwin" && arch == "amd64":
+	case goos == "darwin" && arch == "amd64":
 		zipName = fmt.Sprintf("llama-%s-bin-macos-x64.zip", tag)
 	default:
-		err = fmt.Errorf("unsupported platform: %s/%s", os_, arch)
+		err = fmt.Errorf("unsupported platform: %s/%s", goos, arch)
 	}
 	return
 }
 
+// githubRelease is the subset of the GitHub releases API we need.
+type githubRelease struct {
+	TagName string `json:"tag_name"`
+}
+
 func fetchLatestLlamaTag() (string, error) {
 	client := &http.Client{}
-	req, _ := http.NewRequest(http.MethodGet, "https://api.github.com/repos/ggml-org/llama.cpp/releases/latest", nil)
+	req, err := http.NewRequest(http.MethodGet, "https://api.github.com/repos/ggml-org/llama.cpp/releases/latest", nil)
+	if err != nil {
+		return "", fmt.Errorf("build request: %w", err)
+	}
 	req.Header.Set("Accept", "application/vnd.github+json")
 
 	resp, err := client.Do(req)
@@ -124,9 +132,7 @@ func fetchLatestLlamaTag() (string, error) {
 	}
 	defer resp.Body.Close()
 
-	var release struct {
-		TagName string `json:"tag_name"`
-	}
+	var release githubRelease
 	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
 		return "", fmt.Errorf("decode github response: %w", err)
 	}
@@ -144,7 +150,6 @@ func extractLlamaServer(zipPath, destPath string) error {
 	defer r.Close()
 
 	for _, f := range r.File {
-		// look for build/bin/llama-server or llama-server anywhere
 		base := filepath.Base(f.Name)
 		if base != "llama-server" && base != "llama-server.exe" {
 			continue
@@ -168,7 +173,7 @@ func extractLlamaServer(zipPath, destPath string) error {
 		if copyErr != nil {
 			return copyErr
 		}
-		log.Printf("Extracted %s → %s", f.Name, destPath)
+		slog.Info("extracted llama-server", "from", f.Name, "to", destPath)
 		return nil
 	}
 	return fmt.Errorf("llama-server not found inside zip")
