@@ -8,12 +8,12 @@ function ToolCallAccordion({ toolCalls }) {
   return (
     <div className="mt-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
       <button
-        className="w-full flex items-center gap-2 px-3 py-2 text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer"
+        className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer"
         onClick={() => setOpen((v) => !v)}
       >
-        <Wrench size={11} />
+        <Wrench size={14} />
         <span>{toolCalls.length} tool call{toolCalls.length !== 1 ? 's' : ''}</span>
-        {open ? <ChevronDown size={11} className="ml-auto" /> : <ChevronRight size={11} className="ml-auto" />}
+        {open ? <ChevronDown size={14} className="ml-auto" /> : <ChevronRight size={14} className="ml-auto" />}
       </button>
       {open && (
         <div className="px-3 pb-3 space-y-2">
@@ -22,14 +22,14 @@ function ToolCallAccordion({ toolCalls }) {
             const args = tc.input ?? tc.args ?? tc.function?.arguments;
             const result = tc.output ?? tc.result;
             return (
-              <div key={i} className="rounded-lg bg-[var(--surface-elevated)] p-2.5 border border-[var(--border)]">
-                <p className="text-xs font-medium text-[var(--primary)] mb-1">{name}</p>
-                <pre className="text-[11px] text-[var(--muted-foreground)] whitespace-pre-wrap">
+              <div key={i} className="rounded-lg bg-[var(--surface-elevated)] p-3 border border-[var(--border)]">
+                <p className="text-sm font-medium text-[var(--primary)] mb-1">{name}</p>
+                <pre className="text-xs text-[var(--muted-foreground)] whitespace-pre-wrap">
                   {typeof args === 'string' ? args : JSON.stringify(args, null, 2)}
                 </pre>
                 {result != null && (
                   <div className="mt-1.5 pt-1.5 border-t border-[var(--border)]">
-                    <p className="text-[11px] text-emerald-600 dark:text-emerald-400">{String(result)}</p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400">{String(result)}</p>
                   </div>
                 )}
               </div>
@@ -51,7 +51,7 @@ export function ChatMessage({ message }) {
       <div className={cn('max-w-[80%] space-y-1')}>
         <div
           className={cn(
-            'rounded-2xl px-4 py-3 text-sm leading-relaxed',
+            'rounded-2xl px-5 py-4 text-base leading-relaxed',
             isUser
               ? 'bg-[var(--primary)] text-white'
               : isError

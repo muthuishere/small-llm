@@ -29,37 +29,37 @@ export function SchemaEditor() {
   };
 
   return (
-    <div className="px-5 py-5 space-y-5">
+    <div className="px-6 py-6 space-y-6">
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2 px-1">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3 px-1">
           JSON Schema
         </p>
         <Textarea
           value={schemaText}
           onChange={(e) => setSchemaText(e.target.value)}
           rows={6}
-          className="font-mono text-xs"
+          className="font-mono text-sm"
           placeholder='{ "type": "object", ... }'
         />
-        {schemaError && <p className="text-[var(--destructive)] text-xs mt-1.5">{schemaError}</p>}
-        <Button size="sm" className="mt-2 w-full" variant="secondary" onClick={applySchema}>
+        {schemaError && <p className="text-[var(--destructive)] text-sm mt-2">{schemaError}</p>}
+        <Button size="sm" className="mt-3 w-full" variant="secondary" onClick={applySchema}>
           Apply Schema
         </Button>
       </div>
 
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2 px-1">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3 px-1">
           Few-shot Examples
         </p>
         <Textarea
           value={examplesText}
           onChange={(e) => setExamplesText(e.target.value)}
           rows={4}
-          className="font-mono text-xs"
+          className="font-mono text-sm"
           placeholder='[{"input": "...", "output": {...}}]'
         />
-        {examplesError && <p className="text-[var(--destructive)] text-xs mt-1.5">{examplesError}</p>}
-        <Button size="sm" className="mt-2 w-full" variant="secondary" onClick={applyExamples}>
+        {examplesError && <p className="text-[var(--destructive)] text-sm mt-2">{examplesError}</p>}
+        <Button size="sm" className="mt-3 w-full" variant="secondary" onClick={applyExamples}>
           Apply Examples
         </Button>
       </div>

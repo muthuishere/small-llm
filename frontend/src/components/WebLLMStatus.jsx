@@ -7,8 +7,8 @@ export function WebLLMStatus({ status }) {
 
   if (phase === 'ready') {
     return (
-      <div className="mx-5 mb-2 flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
-        <CheckCircle size={15} />
+      <div className="mx-6 mb-2 flex items-center gap-2.5 text-base text-emerald-600 dark:text-emerald-400">
+        <CheckCircle size={18} />
         <span className="font-medium">Model ready</span>
       </div>
     );
@@ -16,15 +16,15 @@ export function WebLLMStatus({ status }) {
 
   if (phase === 'error') {
     return (
-      <div className="mx-5 mb-2 text-sm text-[var(--destructive)]">
+      <div className="mx-6 mb-2 text-base text-[var(--destructive)]">
         {text || 'Failed to load model'}
       </div>
     );
   }
 
   return (
-    <div className="mx-5 mb-2">
-      <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)] mb-2">
+    <div className="mx-6 mb-2">
+      <div className="flex items-center justify-between text-sm text-[var(--muted-foreground)] mb-2">
         <span className="truncate">{text || 'Loading…'}</span>
         {progress > 0 && <span className="font-mono shrink-0 ml-2">{Math.round(progress * 100)}%</span>}
       </div>

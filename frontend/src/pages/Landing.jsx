@@ -43,11 +43,11 @@ export function Landing() {
               <Server size={22} className="text-white" />
             </div>
             <span className="text-lg font-semibold text-[var(--foreground)] mb-1.5">Server Mode</span>
-            <span className="text-sm text-[var(--muted-foreground)] mb-6 leading-relaxed">
+            <span className="text-base text-[var(--muted-foreground)] mb-6 leading-relaxed">
               Go backend with llama.cpp. Fast CPU/GPU inference on your machine.
             </span>
-            <span className="flex items-center gap-1.5 text-sm font-medium text-[var(--primary)] mt-auto group-hover:gap-2.5 transition-all">
-              Get started <ArrowRight size={15} />
+            <span className="flex items-center gap-2 text-base font-medium text-[var(--primary)] mt-auto group-hover:gap-3 transition-all">
+              Get started <ArrowRight size={16} />
             </span>
           </button>
 
@@ -59,11 +59,11 @@ export function Landing() {
               <Globe size={22} className="text-[var(--background)]" />
             </div>
             <span className="text-lg font-semibold text-[var(--foreground)] mb-1.5">Browser Mode</span>
-            <span className="text-sm text-[var(--muted-foreground)] mb-6 leading-relaxed">
+            <span className="text-base text-[var(--muted-foreground)] mb-6 leading-relaxed">
               Runs entirely in your browser via WebLLM and WebGPU. No server needed.
             </span>
-            <span className="flex items-center gap-1.5 text-sm font-medium text-[var(--primary)] mt-auto group-hover:gap-2.5 transition-all">
-              Get started <ArrowRight size={15} />
+            <span className="flex items-center gap-2 text-base font-medium text-[var(--primary)] mt-auto group-hover:gap-3 transition-all">
+              Get started <ArrowRight size={16} />
             </span>
           </button>
         </div>

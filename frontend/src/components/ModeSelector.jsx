@@ -17,21 +17,21 @@ export function ModeSelector() {
   };
 
   return (
-    <div className="px-5 py-5">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-3 px-1">Mode</p>
-      <div className="flex flex-col gap-1">
+    <div className="px-6 py-6">
+      <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-4 px-1">Mode</p>
+      <div className="flex flex-col gap-1.5">
         {MODES.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => handleModeChange(id)}
             className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left cursor-pointer',
+              'w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-medium transition-all text-left cursor-pointer',
               mode === id
                 ? 'bg-[var(--surface)] text-[var(--foreground)] shadow-[var(--shadow-card)] border border-[var(--border)]'
                 : 'text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--foreground)]'
             )}
           >
-            <Icon size={16} />
+            <Icon size={20} />
             {label}
           </button>
         ))}

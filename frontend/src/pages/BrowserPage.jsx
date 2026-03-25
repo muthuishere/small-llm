@@ -49,15 +49,15 @@ export function BrowserPage() {
   return (
     <div className="flex flex-col h-screen bg-[var(--background)]">
       {/* Top bar */}
-      <div className="flex items-center gap-2.5 px-6 py-2.5 border-b border-[var(--border)] shrink-0 bg-[var(--background)]">
-        <span className="text-sm font-semibold text-[var(--foreground)]">small‑llm</span>
+      <div className="flex items-center gap-3 px-8 py-3 border-b border-[var(--border)] shrink-0 bg-[var(--background)]">
+        <span className="text-base font-bold text-[var(--foreground)]">small‑llm</span>
         <span className="text-[var(--border)]">·</span>
-        <span className="text-xs text-[var(--muted-foreground)]">Browser</span>
+        <span className="text-sm text-[var(--muted-foreground)]">Browser</span>
         {isReady && (
           <>
             <span className="text-[var(--border)]">·</span>
-            <span className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
               Ready
             </span>
           </>
@@ -65,23 +65,23 @@ export function BrowserPage() {
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        <aside className="w-[280px] flex flex-col bg-[var(--sidebar)] border-r border-[var(--border)] overflow-y-auto shrink-0">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
-            <span className="text-sm font-semibold text-[var(--foreground)]">Browser</span>
-            <div className="flex items-center gap-1.5">
+        <aside className="w-[320px] flex flex-col bg-[var(--sidebar)] border-r border-[var(--border)] overflow-y-auto shrink-0">
+          <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--border)]">
+            <span className="text-lg font-bold text-[var(--foreground)]">Browser</span>
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate('/')}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
+                className="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
                 aria-label="Back"
               >
-                <ArrowLeft size={15} />
+                <ArrowLeft size={18} />
               </button>
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
+                className="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
                 aria-label="Toggle theme"
               >
-                {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+                {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
               </button>
             </div>
           </div>
@@ -92,8 +92,8 @@ export function BrowserPage() {
 
           <ModeSelector />
 
-          {mode === 'tools' && <><div className="mx-5 border-t border-[var(--border)]" /><ToolSelector /></>}
-          {mode === 'object' && <><div className="mx-5 border-t border-[var(--border)]" /><SchemaEditor /></>}
+          {mode === 'tools' && <><div className="mx-6 border-t border-[var(--border)]" /><ToolSelector /></>}
+          {mode === 'object' && <><div className="mx-6 border-t border-[var(--border)]" /><SchemaEditor /></>}
         </aside>
 
         <main className="flex-1 overflow-hidden bg-[var(--background)] relative">
