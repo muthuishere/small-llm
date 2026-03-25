@@ -11,7 +11,7 @@ export function StatusBar() {
         const res = await getStatus();
         setServerStatus(res.data);
       } catch {
-        setServerStatus({ model_ready: false, server_running: false, status_message: 'Cannot reach server' });
+        setServerStatus({ model_downloaded: false, server_running: false, status_message: 'Cannot reach server' });
       }
     };
 
@@ -20,8 +20,8 @@ export function StatusBar() {
     return () => clearInterval(interval);
   }, [setServerStatus]);
 
-  const isReady = serverStatus?.model_ready && serverStatus?.server_running;
-  const isStarting = serverStatus?.server_running && !serverStatus?.model_ready;
+  const isReady = serverStatus?.model_downloaded && serverStatus?.server_running;
+  const isStarting = serverStatus?.server_running && !serverStatus?.model_downloaded;
 
   return (
     <div className="flex items-center gap-3 px-8 py-3 border-b border-[var(--border)] shrink-0 bg-[var(--background)]">
