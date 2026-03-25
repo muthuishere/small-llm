@@ -20,30 +20,30 @@ export function ToolSelector() {
   };
 
   return (
-    <div className="px-5 py-5">
-      <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mb-3">
+    <div className="px-6 py-6">
+      <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-4">
         Tools
       </p>
-      <div className="space-y-1">
+      <div className="space-y-2">
         {AVAILABLE_TOOLS.map(({ id, label, icon: Icon }) => {
           const active = selectedTools.includes(id);
           return (
             <button
               key={id}
               onClick={() => toggle(id)}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors text-left hover:bg-[var(--surface-elevated)]"
+              className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-base transition-all text-left hover:bg-[var(--accent)]"
             >
-              <Icon size={18} className={cn('shrink-0', active ? 'text-[var(--primary)]' : 'text-[var(--muted)]')} />
+              <Icon size={20} className={cn('shrink-0', active ? 'text-[var(--primary)]' : 'text-[var(--muted)]')} />
               <span className={cn('flex-1 font-medium', active ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]')}>
                 {label}
               </span>
               <div className={cn(
-                'w-11 h-6 rounded-full transition-colors relative',
+                'w-12 h-7 rounded-full transition-colors relative',
                 active ? 'bg-[var(--primary)]' : 'bg-[var(--border)]'
               )}>
                 <div className={cn(
-                  'absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform shadow-sm',
-                  active ? 'translate-x-5' : 'translate-x-0.5'
+                  'absolute top-[3px] w-[22px] h-[22px] rounded-full bg-white transition-transform shadow-sm',
+                  active ? 'translate-x-[22px]' : 'translate-x-[3px]'
                 )} />
               </div>
             </button>

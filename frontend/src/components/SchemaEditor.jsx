@@ -29,9 +29,9 @@ export function SchemaEditor() {
   };
 
   return (
-    <div className="px-5 py-5 space-y-5">
+    <div className="px-6 py-6 space-y-5">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mb-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">
           JSON Schema
         </p>
         <Textarea
@@ -48,7 +48,7 @@ export function SchemaEditor() {
       </div>
 
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mb-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">
           Few-shot Examples
         </p>
         <Textarea

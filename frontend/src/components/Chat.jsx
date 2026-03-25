@@ -80,16 +80,16 @@ export function Chat({ callbacks }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
-        <h2 className="text-base font-bold text-[var(--foreground)]">{modeLabels[mode]}</h2>
-        <div className="flex gap-1">
+      <div className="flex items-center justify-between px-8 py-5 border-b border-[var(--border)]">
+        <h2 className="text-lg font-bold text-[var(--foreground)]">{modeLabels[mode]}</h2>
+        <div className="flex gap-2">
           {messages.length > 0 && (
             <>
               <Button variant="ghost" size="icon" onClick={handleCopyAll} title="Copy all">
-                <Copy size={16} />
+                <Copy size={18} />
               </Button>
               <Button variant="ghost" size="icon" onClick={clearMessages} title="Clear chat">
-                <Trash2 size={16} />
+                <Trash2 size={18} />
               </Button>
             </>
           )}
@@ -97,11 +97,11 @@ export function Chat({ callbacks }) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8 space-y-6">
+      <div className="flex-1 overflow-y-auto px-8 md:px-12 lg:px-16 py-8 space-y-6">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <p className="text-xl md:text-2xl font-bold text-[var(--foreground)] mb-2">Start a conversation</p>
-            <p className="text-base text-[var(--muted)]">Send a message to begin</p>
+            <p className="text-2xl md:text-3xl font-bold text-[var(--foreground)] mb-3">Start a conversation</p>
+            <p className="text-lg text-[var(--muted-foreground)]">Send a message to begin</p>
           </div>
         )}
         {messages.map((msg) => (
@@ -120,8 +120,8 @@ export function Chat({ callbacks }) {
       </div>
 
       {/* Input */}
-      <div className="border-t border-[var(--border)] px-6 md:px-10 py-5">
-        <div className="flex gap-3 items-end max-w-3xl mx-auto">
+      <div className="border-t border-[var(--border)] px-8 md:px-12 lg:px-16 py-6">
+        <div className="flex gap-4 items-end max-w-3xl mx-auto">
           <textarea
             ref={textareaRef}
             value={input}
@@ -134,14 +134,13 @@ export function Chat({ callbacks }) {
             placeholder="Message…"
             disabled={isLoading}
             rows={1}
-            className="flex-1 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3.5 text-base text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--primary)] resize-none overflow-hidden transition-colors disabled:opacity-40"
-            style={{ minHeight: '52px', maxHeight: '150px' }}
+            className="flex-1 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-6 py-4 text-base text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--primary)] focus:shadow-[0_0_0_3px_rgba(0,113,227,0.15)] resize-none overflow-hidden transition-all disabled:opacity-40"
+            style={{ minHeight: '56px', maxHeight: '150px' }}
           />
           <Button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            size="lg"
-            className="h-[52px] w-[52px] shrink-0 rounded-2xl"
+            className="h-14 w-14 shrink-0 rounded-2xl"
           >
             <Send size={20} />
           </Button>
