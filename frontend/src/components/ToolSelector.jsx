@@ -3,9 +3,9 @@ import useChatStore from '../store/chatStore';
 import { cn } from '../lib/utils';
 
 const AVAILABLE_TOOLS = [
-  { id: 'calculator', label: 'Calculator', icon: Calculator, description: 'Math expressions' },
-  { id: 'datetime', label: 'Date & Time', icon: Clock, description: 'Current time/date' },
-  { id: 'weather', label: 'Weather', icon: Cloud, description: 'Weather lookup' },
+  { id: 'calculator', label: 'Calculator', icon: Calculator },
+  { id: 'datetime', label: 'Date & Time', icon: Clock },
+  { id: 'weather', label: 'Weather', icon: Cloud },
 ];
 
 export function ToolSelector() {
@@ -20,40 +20,31 @@ export function ToolSelector() {
   };
 
   return (
-    <div className="p-3">
-      <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2 px-1">
-        Available Tools
+    <div className="px-5 py-5">
+      <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mb-3">
+        Tools
       </p>
       <div className="space-y-1">
-        {AVAILABLE_TOOLS.map(({ id, label, icon: Icon, description }) => {
+        {AVAILABLE_TOOLS.map(({ id, label, icon: Icon }) => {
           const active = selectedTools.includes(id);
           return (
             <button
               key={id}
               onClick={() => toggle(id)}
-              className={cn(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left border',
-                active
-                  ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                  : 'border-transparent text-[var(--muted-foreground)] hover:bg-[var(--surface-elevated)]'
-              )}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors text-left hover:bg-[var(--surface-elevated)]"
             >
-              <Icon size={15} className="shrink-0" />
-              <div>
-                <div className="font-medium">{label}</div>
-                <div className="text-xs text-[var(--muted)]">{description}</div>
-              </div>
-              <div className="ml-auto">
+              <Icon size={18} className={cn('shrink-0', active ? 'text-[var(--primary)]' : 'text-[var(--muted)]')} />
+              <span className={cn('flex-1 font-medium', active ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]')}>
+                {label}
+              </span>
+              <div className={cn(
+                'w-11 h-6 rounded-full transition-colors relative',
+                active ? 'bg-[var(--primary)]' : 'bg-[var(--border)]'
+              )}>
                 <div className={cn(
-                  'w-4 h-4 rounded border-2 flex items-center justify-center shrink-0',
-                  active ? 'bg-blue-500 border-blue-500' : 'border-[var(--border)]'
-                )}>
-                  {active && (
-                    <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
+                  'absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform shadow-sm',
+                  active ? 'translate-x-5' : 'translate-x-0.5'
+                )} />
               </div>
             </button>
           );

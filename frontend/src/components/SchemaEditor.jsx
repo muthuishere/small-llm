@@ -29,11 +29,11 @@ export function SchemaEditor() {
   };
 
   return (
-    <div className="p-3 space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] px-1">
-        JSON Schema
-      </p>
+    <div className="px-5 py-5 space-y-5">
       <div>
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mb-2">
+          JSON Schema
+        </p>
         <Textarea
           value={schemaText}
           onChange={(e) => setSchemaText(e.target.value)}
@@ -41,16 +41,16 @@ export function SchemaEditor() {
           className="font-mono text-xs"
           placeholder='{ "type": "object", ... }'
         />
-        {schemaError && <p className="text-red-400 text-xs mt-1">{schemaError}</p>}
-        <Button size="sm" className="mt-1.5 w-full" variant="secondary" onClick={applySchema}>
+        {schemaError && <p className="text-[var(--destructive)] text-xs mt-1">{schemaError}</p>}
+        <Button size="sm" className="mt-2 w-full" variant="secondary" onClick={applySchema}>
           Apply Schema
         </Button>
       </div>
 
-      <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] px-1 mt-3">
-        Few-shot Examples
-      </p>
       <div>
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)] mb-2">
+          Few-shot Examples
+        </p>
         <Textarea
           value={examplesText}
           onChange={(e) => setExamplesText(e.target.value)}
@@ -58,8 +58,8 @@ export function SchemaEditor() {
           className="font-mono text-xs"
           placeholder='[{"input": "...", "output": {...}}]'
         />
-        {examplesError && <p className="text-red-400 text-xs mt-1">{examplesError}</p>}
-        <Button size="sm" className="mt-1.5 w-full" variant="secondary" onClick={applyExamples}>
+        {examplesError && <p className="text-[var(--destructive)] text-xs mt-1">{examplesError}</p>}
+        <Button size="sm" className="mt-2 w-full" variant="secondary" onClick={applyExamples}>
           Apply Examples
         </Button>
       </div>

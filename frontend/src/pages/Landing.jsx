@@ -1,63 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { Sun, Moon, Server, Cpu, ArrowRight, Zap } from 'lucide-react';
+import { Sun, Moon, Server, Globe, ArrowRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { Button } from '../components/ui/Button';
-
-const FEATURES = {
-  server: [
-    { icon: Server,  text: 'Runs on the Go backend via llama.cpp' },
-    { icon: Zap,     text: 'Faster inference — uses your CPU/GPU' },
-    { icon: ArrowRight, text: 'Supports chat, structured output & tools' },
-  ],
-  browser: [
-    { icon: Cpu,     text: 'Runs entirely in your browser via WebLLM' },
-    { icon: Zap,     text: 'No server required after first load' },
-    { icon: ArrowRight, text: 'Supports chat, structured output & tools' },
-  ],
-};
-
-function ModeCard({ to, color, icon: Icon, title, subtitle, features, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`
-        group relative flex flex-col gap-5 p-6 rounded-2xl border-2 text-left
-        transition-all duration-200 hover:scale-[1.02] active:scale-[0.99]
-        bg-[var(--surface)] hover:bg-[var(--surface-elevated)]
-        ${color}
-      `}
-    >
-      <div className="flex items-start gap-4">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${color.replace('border-', 'bg-').replace('/40', '/20')}`}>
-          <Icon size={24} className={color.includes('blue') ? 'text-blue-400' : 'text-purple-400'} />
-        </div>
-        <div>
-          <h2 className="text-lg font-bold text-[var(--foreground)]">{title}</h2>
-          <p className="text-sm text-[var(--muted-foreground)] mt-0.5">{subtitle}</p>
-        </div>
-      </div>
-
-      <ul className="space-y-2.5">
-        {features.map((f, i) => {
-          const FIcon = f.icon;
-          return (
-            <li key={i} className="flex items-center gap-2.5 text-sm text-[var(--muted-foreground)]">
-              <FIcon size={14} className="shrink-0 opacity-60" />
-              {f.text}
-            </li>
-          );
-        })}
-      </ul>
-
-      <div className={`
-        absolute bottom-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity
-        ${color.includes('blue') ? 'text-blue-400' : 'text-purple-400'}
-      `}>
-        <ArrowRight size={20} />
-      </div>
-    </button>
-  );
-}
 
 export function Landing() {
   const navigate  = useNavigate();
@@ -65,59 +8,70 @@ export function Landing() {
 
   return (
     <div className="min-h-screen bg-[var(--background)] flex flex-col">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
-            <Zap size={14} className="text-white" />
-          </div>
-          <span className="font-bold text-[var(--foreground)]">small-llm</span>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 md:px-10 py-5">
+        <span className="text-base md:text-lg font-bold tracking-tight text-[var(--foreground)]">
+          small-llm
+        </span>
+        <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="text-[var(--muted-foreground)]"
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--surface-elevated)] transition-colors text-[var(--muted-foreground)]"
         >
-          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-        </Button>
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
       </header>
 
       {/* Hero */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-        <div className="text-center mb-10 max-w-lg">
-          <h1 className="text-4xl font-extrabold text-[var(--foreground)] mb-3 tracking-tight">
-            Local LLM · Two Ways
+      <main className="flex-1 flex flex-col items-center justify-center px-6 md:px-10 pb-16">
+        <div className="text-center mb-12 md:mb-16 max-w-2xl">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-[var(--foreground)] mb-4 md:mb-6 tracking-tight leading-[1.1]">
+            Local AI.
+            <br />
+            <span className="text-[var(--muted-foreground)]">Two ways to run it.</span>
           </h1>
-          <p className="text-[var(--muted-foreground)] text-base leading-relaxed">
-            Chat with <strong className="text-[var(--foreground)]">Qwen 2.5 0.5B</strong> either
-            through the Go server powered by&nbsp;llama.cpp, or directly in your browser via
-            WebLLM. Both support chat, structured output and tool use.
+          <p className="text-base md:text-xl text-[var(--muted-foreground)] leading-relaxed max-w-lg mx-auto">
+            Qwen 2.5 0.5B with chat, structured output, and tool calling.
+            On your server or in your browser.
           </p>
         </div>
 
-        {/* Mode cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-2xl">
-          <ModeCard
-            icon={Server}
-            title="Server Mode"
-            subtitle="Go backend · llama.cpp"
-            color="border-blue-500/40 hover:border-blue-500/80"
-            features={FEATURES.server}
+        {/* Two mode cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl px-2">
+          <button
             onClick={() => navigate('/server')}
-          />
-          <ModeCard
-            icon={Cpu}
-            title="Browser Mode"
-            subtitle="WebLLM · runs in-browser"
-            color="border-purple-500/40 hover:border-purple-500/80"
-            features={FEATURES.browser}
+            className="group flex flex-col items-start p-6 md:p-8 rounded-2xl bg-[var(--surface-elevated)] hover:bg-[var(--accent)] border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 text-left cursor-pointer"
+          >
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[var(--primary)] flex items-center justify-center mb-5">
+              <Server size={24} className="text-white" />
+            </div>
+            <span className="text-lg md:text-xl font-bold text-[var(--foreground)] mb-1">Server Mode</span>
+            <span className="text-sm md:text-base text-[var(--muted-foreground)] mb-6 leading-relaxed">
+              Go backend powered by llama.cpp. Fast inference on your machine.
+            </span>
+            <span className="flex items-center gap-2 text-sm md:text-base font-semibold text-[var(--primary)] mt-auto group-hover:gap-3 transition-all">
+              Get started <ArrowRight size={16} />
+            </span>
+          </button>
+
+          <button
             onClick={() => navigate('/browser')}
-          />
+            className="group flex flex-col items-start p-6 md:p-8 rounded-2xl bg-[var(--surface-elevated)] hover:bg-[var(--accent)] border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 text-left cursor-pointer"
+          >
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-[var(--foreground)] flex items-center justify-center mb-5">
+              <Globe size={24} className="text-[var(--background)]" />
+            </div>
+            <span className="text-lg md:text-xl font-bold text-[var(--foreground)] mb-1">Browser Mode</span>
+            <span className="text-sm md:text-base text-[var(--muted-foreground)] mb-6 leading-relaxed">
+              Runs entirely in your browser via WebLLM. No server required.
+            </span>
+            <span className="flex items-center gap-2 text-sm md:text-base font-semibold text-[var(--primary)] mt-auto group-hover:gap-3 transition-all">
+              Get started <ArrowRight size={16} />
+            </span>
+          </button>
         </div>
 
-        <p className="mt-8 text-xs text-[var(--muted)]">
-          Model: Qwen 2.5 0.5B Instruct (q4_k_m) · ~394 MB downloaded once and cached
+        <p className="mt-10 md:mt-14 text-sm text-[var(--muted)]">
+          ~394 MB model · downloaded once · cached locally
         </p>
       </main>
     </div>

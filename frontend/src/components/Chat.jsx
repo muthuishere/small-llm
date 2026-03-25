@@ -4,19 +4,7 @@ import { toast } from 'sonner';
 import useChatStore from '../store/chatStore';
 import { ChatMessage } from './ChatMessage';
 import { Button } from './ui/Button';
-import { Spinner } from './ui/Spinner';
 
-/**
- * Chat — main chat panel.
- *
- * @param {{
- *   callbacks: {
- *     chat:   (text, history, context) => Promise<{response, tokens_used}>,
- *     object: (text, schema, fewShot)  => Promise<{result, raw_response, tokens_used}>,
- *     tools:  (text, tools, context)   => Promise<{response, tool_calls, tokens_used}>,
- *   }
- * }} props
- */
 export function Chat({ callbacks }) {
   const {
     messages, mode, selectedTools, schema, fewShotExamples, context,
@@ -87,28 +75,21 @@ export function Chat({ callbacks }) {
     toast.success('Copied to clipboard');
   };
 
-  const modeLabels = { chat: 'Chat', object: 'Structured Output', tools: 'Chat with Tools' };
+  const modeLabels = { chat: 'Chat', object: 'Structured Output', tools: 'Tools' };
 
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
-        <div>
-          <h2 className="font-semibold text-[var(--foreground)]">{modeLabels[mode]}</h2>
-          <p className="text-xs text-[var(--muted-foreground)]">
-            {mode === 'chat'   && 'Conversational chat'}
-            {mode === 'object' && 'Returns structured JSON objects'}
-            {mode === 'tools'  && `Tools: ${selectedTools.join(', ') || 'none selected'}`}
-          </p>
-        </div>
-        <div className="flex gap-2">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)]">
+        <h2 className="text-base font-bold text-[var(--foreground)]">{modeLabels[mode]}</h2>
+        <div className="flex gap-1">
           {messages.length > 0 && (
             <>
               <Button variant="ghost" size="icon" onClick={handleCopyAll} title="Copy all">
-                <Copy size={15} />
+                <Copy size={16} />
               </Button>
               <Button variant="ghost" size="icon" onClick={clearMessages} title="Clear chat">
-                <Trash2 size={15} />
+                <Trash2 size={16} />
               </Button>
             </>
           )}
@@ -116,17 +97,11 @@ export function Chat({ callbacks }) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8 space-y-6">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center text-[var(--muted-foreground)]">
-            <div className="w-16 h-16 rounded-full bg-[var(--surface-elevated)] flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-            </div>
-            <p className="font-medium">Start a conversation</p>
-            <p className="text-sm mt-1">Send a message to begin chatting with the AI</p>
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <p className="text-xl md:text-2xl font-bold text-[var(--foreground)] mb-2">Start a conversation</p>
+            <p className="text-base text-[var(--muted)]">Send a message to begin</p>
           </div>
         )}
         {messages.map((msg) => (
@@ -134,15 +109,10 @@ export function Chat({ callbacks }) {
         ))}
         {isLoading && (
           <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-[var(--surface-elevated)] border border-[var(--border)] flex items-center justify-center shrink-0">
-              <Spinner size="sm" />
-            </div>
-            <div className="bg-[var(--surface)] border border-[var(--border)] border-l-2 border-l-blue-500 rounded-2xl rounded-tl-sm px-4 py-3">
-              <div className="flex gap-1 items-center">
-                <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
+            <div className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-[var(--surface-elevated)]">
+              <span className="w-2 h-2 bg-[var(--muted)] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-2 h-2 bg-[var(--muted)] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-2 h-2 bg-[var(--muted)] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           </div>
         )}
@@ -150,35 +120,32 @@ export function Chat({ callbacks }) {
       </div>
 
       {/* Input */}
-      <div className="border-t border-[var(--border)] p-4">
-        <div className="flex gap-2 items-end">
+      <div className="border-t border-[var(--border)] px-6 md:px-10 py-5">
+        <div className="flex gap-3 items-end max-w-3xl mx-auto">
           <textarea
             ref={textareaRef}
             value={input}
             onChange={(e) => {
               setInput(e.target.value);
               e.target.style.height = 'auto';
-              e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+              e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
             }}
             onKeyDown={handleKeyDown}
-            placeholder={`Message${mode === 'tools' ? ' (AI will use selected tools)' : ''}… (Enter to send, Shift+Enter for newline)`}
+            placeholder="Message…"
             disabled={isLoading}
             rows={1}
-            className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none overflow-hidden transition-colors disabled:opacity-50"
-            style={{ minHeight: '44px', maxHeight: '120px' }}
+            className="flex-1 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3.5 text-base text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--primary)] resize-none overflow-hidden transition-colors disabled:opacity-40"
+            style={{ minHeight: '52px', maxHeight: '150px' }}
           />
           <Button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            size="icon"
-            className="h-11 w-11 shrink-0 rounded-xl"
+            size="lg"
+            className="h-[52px] w-[52px] shrink-0 rounded-2xl"
           >
-            {isLoading ? <Spinner size="sm" /> : <Send size={16} />}
+            <Send size={20} />
           </Button>
         </div>
-        <p className="text-[10px] text-[var(--muted)] mt-1.5 px-1">
-          Enter ↵ to send · Shift+Enter for newline
-        </p>
       </div>
     </div>
   );
