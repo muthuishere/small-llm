@@ -1,0 +1,12 @@
+{
+  "name": "small-llm-e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "smoke": "bun test scenarios/smoke"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.0.0"
+  }
+}

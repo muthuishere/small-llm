@@ -1,0 +1,29 @@
+version: "3"
+
+dotenv:
+  - "../.env"
+
+tasks:
+  install:
+    desc: Install bun dependencies
+    dir: "{{.TASKFILE_DIR}}"
+    cmd: bun install
+
+  collect-data:
+    desc: Wait for server and collect test data into .generated/test-data.json
+    dir: "{{.TASKFILE_DIR}}"
+    cmd: bun run scripts/collect-test-data.ts
+
+  smoke:
+    desc: Collect data then run smoke scenarios
+    dir: "{{.TASKFILE_DIR}}"
+    cmds:
+      - task: collect-data
+      - bun test scenarios/smoke
+
+  test:
+    desc: Collect data then run all e2e tests
+    dir: "{{.TASKFILE_DIR}}"
+    cmds:
+      - task: collect-data
+      - bun test
