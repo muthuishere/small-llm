@@ -51,8 +51,14 @@ export function JsonViewer({ data, className }) {
     try {
       parsed = JSON.parse(data);
     } catch {
-      return <pre className={cn('text-xs text-red-400 font-mono', className)}>{data}</pre>;
+      // Try to display as formatted text if it looks JSON-ish
+      return <pre className={cn('text-xs font-mono leading-relaxed overflow-auto', className)}>{data}</pre>;
     }
+  }
+
+  // If parsed is still a string (shouldn't happen but safety net), show as-is
+  if (typeof parsed === 'string') {
+    return <pre className={cn('text-xs font-mono leading-relaxed overflow-auto', className)}>{parsed}</pre>;
   }
 
   return (

@@ -17,19 +17,24 @@ function ToolCallAccordion({ toolCalls }) {
       </button>
       {open && (
         <div className="px-3 pb-3 space-y-2">
-          {toolCalls.map((tc, i) => (
-            <div key={i} className="rounded bg-[var(--surface-elevated)] p-2">
-              <p className="text-xs font-semibold text-blue-400 mb-1">{tc.name || tc.function?.name}</p>
-              <pre className="text-xs text-[var(--muted-foreground)] whitespace-pre-wrap">
-                {JSON.stringify(tc.args || tc.function?.arguments, null, 2)}
-              </pre>
-              {tc.result && (
-                <div className="mt-1 pt-1 border-t border-[var(--border)]">
-                  <p className="text-xs text-green-400">Result: {String(tc.result)}</p>
-                </div>
-              )}
-            </div>
-          ))}
+          {toolCalls.map((tc, i) => {
+            const name   = tc.tool || tc.name || tc.function?.name || 'unknown';
+            const args   = tc.input ?? tc.args ?? tc.function?.arguments;
+            const result = tc.output ?? tc.result;
+            return (
+              <div key={i} className="rounded bg-[var(--surface-elevated)] p-2">
+                <p className="text-xs font-semibold text-blue-400 mb-1">{name}</p>
+                <pre className="text-xs text-[var(--muted-foreground)] whitespace-pre-wrap">
+                  {typeof args === 'string' ? args : JSON.stringify(args, null, 2)}
+                </pre>
+                {result != null && (
+                  <div className="mt-1 pt-1 border-t border-[var(--border)]">
+                    <p className="text-xs text-green-400">Result: {String(result)}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
