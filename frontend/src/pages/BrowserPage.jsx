@@ -39,9 +39,9 @@ export function BrowserPage() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const browserCallbacks = useCallback(() => ({
-    chat:   (text, history, context) => browserChat(text, history, context),
-    object: (text, schema, fewShot)  => browserChatWithObject(text, schema, fewShot),
-    tools:  (text, tools, context)   => browserChatWithTools(text, tools, context),
+    chat: (text, history, context) => browserChat(text, history, context),
+    object: (text, schema, fewShot) => browserChatWithObject(text, schema, fewShot),
+    tools: (text, tools, context) => browserChatWithTools(text, tools, context),
   }), [])();
 
   const isReady = webllmStatus.phase === 'ready';
@@ -49,15 +49,15 @@ export function BrowserPage() {
   return (
     <div className="flex flex-col h-screen bg-[var(--background)]">
       {/* Top bar */}
-      <div className="flex items-center gap-3 px-8 py-3.5 border-b border-[var(--border)] shrink-0">
-        <span className="text-lg font-bold text-[var(--foreground)]">small‑llm</span>
+      <div className="flex items-center gap-2.5 px-6 py-2.5 border-b border-[var(--border)] shrink-0 bg-[var(--background)]">
+        <span className="text-sm font-semibold text-[var(--foreground)]">small‑llm</span>
         <span className="text-[var(--border)]">·</span>
-        <span className="text-base text-[var(--muted-foreground)]">Browser</span>
+        <span className="text-xs text-[var(--muted-foreground)]">Browser</span>
         {isReady && (
           <>
             <span className="text-[var(--border)]">·</span>
-            <span className="flex items-center gap-2 text-base text-emerald-600 dark:text-emerald-400 font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+            <span className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
               Ready
             </span>
           </>
@@ -65,16 +65,23 @@ export function BrowserPage() {
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-[300px] lg:w-[340px] flex flex-col bg-[var(--sidebar)] border-r border-[var(--border)] overflow-y-auto shrink-0">
-          <div className="flex items-center justify-between px-6 py-6 border-b border-[var(--border)]">
-            <span className="text-xl font-bold text-[var(--foreground)]">Browser</span>
-            <div className="flex items-center gap-2.5">
-              <button onClick={() => navigate('/')} className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--surface)] shadow-[var(--shadow-card)] text-[var(--foreground)] hover:shadow-[var(--shadow-elevated)] transition-all">
-                <ArrowLeft size={20} />
+        <aside className="w-[280px] flex flex-col bg-[var(--sidebar)] border-r border-[var(--border)] overflow-y-auto shrink-0">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+            <span className="text-sm font-semibold text-[var(--foreground)]">Browser</span>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => navigate('/')}
+                className="w-8 h-8 flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
+                aria-label="Back"
+              >
+                <ArrowLeft size={15} />
               </button>
-              <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--surface)] shadow-[var(--shadow-card)] text-[var(--foreground)] hover:shadow-[var(--shadow-elevated)] transition-all">
-                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="w-8 h-8 flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
               </button>
             </div>
           </div>
@@ -85,23 +92,23 @@ export function BrowserPage() {
 
           <ModeSelector />
 
-          {mode === 'tools'  && <><div className="mx-6 border-t border-[var(--border)]" /><ToolSelector /></>}
-          {mode === 'object' && <><div className="mx-6 border-t border-[var(--border)]" /><SchemaEditor /></>}
+          {mode === 'tools' && <><div className="mx-5 border-t border-[var(--border)]" /><ToolSelector /></>}
+          {mode === 'object' && <><div className="mx-5 border-t border-[var(--border)]" /><SchemaEditor /></>}
         </aside>
 
         <main className="flex-1 overflow-hidden bg-[var(--background)] relative">
           {!isReady && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-[var(--background)]/95 backdrop-blur-sm">
-              <p className="text-2xl md:text-3xl font-bold text-[var(--foreground)] mb-3">
+              <p className="text-xl font-semibold text-[var(--foreground)] mb-2">
                 {webllmStatus.phase === 'error' ? 'Failed to load model' : 'Loading model…'}
               </p>
-              <p className="text-lg text-[var(--muted-foreground)] max-w-sm text-center leading-relaxed">
+              <p className="text-sm text-[var(--muted-foreground)] max-w-sm text-center leading-relaxed">
                 {webllmStatus.phase === 'error'
                   ? webllmStatus.text
                   : 'Downloaded once, cached locally.'}
               </p>
               {webllmStatus.phase === 'loading' && webllmStatus.progress > 0 && (
-                <div className="mt-8 w-72 h-2 rounded-full bg-[var(--surface-elevated)] overflow-hidden">
+                <div className="mt-6 w-64 h-1.5 rounded-full bg-[var(--surface-elevated)] overflow-hidden">
                   <div
                     className="h-full rounded-full bg-[var(--primary)] transition-all duration-300"
                     style={{ width: `${Math.round(webllmStatus.progress * 100)}%` }}
@@ -109,7 +116,7 @@ export function BrowserPage() {
                 </div>
               )}
               {webllmStatus.phase === 'loading' && webllmStatus.progress > 0 && (
-                <p className="mt-3 text-base font-mono text-[var(--muted-foreground)]">
+                <p className="mt-2 text-xs font-mono text-[var(--muted-foreground)]">
                   {Math.round(webllmStatus.progress * 100)}%
                 </p>
               )}

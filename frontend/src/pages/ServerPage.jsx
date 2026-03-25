@@ -11,7 +11,7 @@ import useChatStore from '../store/chatStore';
 import { sendChat, sendChatWithObject, sendChatWithTools } from '../services/api';
 
 const serverCallbacks = {
-  chat:   async (text, history, context) => {
+  chat: async (text, history, context) => {
     const res = await sendChat(text, history, context);
     return res.data;
   },
@@ -19,7 +19,7 @@ const serverCallbacks = {
     const res = await sendChatWithObject(text, schema, fewShot);
     return res.data;
   },
-  tools:  async (text, tools, context) => {
+  tools: async (text, tools, context) => {
     const res = await sendChatWithTools(text, tools, context);
     return res.data;
   },
@@ -37,24 +37,31 @@ export function ServerPage() {
       <StatusBar />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-[300px] lg:w-[340px] flex flex-col bg-[var(--sidebar)] border-r border-[var(--border)] overflow-y-auto shrink-0">
-          <div className="flex items-center justify-between px-6 py-6 border-b border-[var(--border)]">
-            <span className="text-xl font-bold text-[var(--foreground)]">Server</span>
-            <div className="flex items-center gap-2.5">
-              <button onClick={() => navigate('/')} className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--surface)] shadow-[var(--shadow-card)] text-[var(--foreground)] hover:shadow-[var(--shadow-elevated)] transition-all">
-                <ArrowLeft size={20} />
+        <aside className="w-[280px] flex flex-col bg-[var(--sidebar)] border-r border-[var(--border)] overflow-y-auto shrink-0">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+            <span className="text-sm font-semibold text-[var(--foreground)]">Server</span>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => navigate('/')}
+                className="w-8 h-8 flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
+                aria-label="Back"
+              >
+                <ArrowLeft size={15} />
               </button>
-              <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="w-11 h-11 flex items-center justify-center rounded-xl bg-[var(--surface)] shadow-[var(--shadow-card)] text-[var(--foreground)] hover:shadow-[var(--shadow-elevated)] transition-all">
-                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="w-8 h-8 flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
               </button>
             </div>
           </div>
 
           <ModeSelector />
 
-          {mode === 'tools'  && <><div className="mx-6 border-t border-[var(--border)]" /><ToolSelector /></>}
-          {mode === 'object' && <><div className="mx-6 border-t border-[var(--border)]" /><SchemaEditor /></>}
+          {mode === 'tools' && <><div className="mx-5 border-t border-[var(--border)]" /><ToolSelector /></>}
+          {mode === 'object' && <><div className="mx-5 border-t border-[var(--border)]" /><SchemaEditor /></>}
         </aside>
 
         <main className="flex-1 overflow-hidden bg-[var(--background)]">

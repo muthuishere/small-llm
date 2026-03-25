@@ -29,9 +29,9 @@ export function SchemaEditor() {
   };
 
   return (
-    <div className="px-6 py-6 space-y-5">
+    <div className="px-5 py-5 space-y-5">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2 px-1">
           JSON Schema
         </p>
         <Textarea
@@ -41,14 +41,14 @@ export function SchemaEditor() {
           className="font-mono text-xs"
           placeholder='{ "type": "object", ... }'
         />
-        {schemaError && <p className="text-[var(--destructive)] text-xs mt-1">{schemaError}</p>}
+        {schemaError && <p className="text-[var(--destructive)] text-xs mt-1.5">{schemaError}</p>}
         <Button size="sm" className="mt-2 w-full" variant="secondary" onClick={applySchema}>
           Apply Schema
         </Button>
       </div>
 
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)] mb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2 px-1">
           Few-shot Examples
         </p>
         <Textarea
@@ -58,7 +58,7 @@ export function SchemaEditor() {
           className="font-mono text-xs"
           placeholder='[{"input": "...", "output": {...}}]'
         />
-        {examplesError && <p className="text-[var(--destructive)] text-xs mt-1">{examplesError}</p>}
+        {examplesError && <p className="text-[var(--destructive)] text-xs mt-1.5">{examplesError}</p>}
         <Button size="sm" className="mt-2 w-full" variant="secondary" onClick={applyExamples}>
           Apply Examples
         </Button>

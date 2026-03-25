@@ -5,39 +5,41 @@
 
 :root {
   --background: #fafafa;
-  --foreground: #1d1d1f;
+  --foreground: #171717;
   --surface: #ffffff;
-  --surface-elevated: #f5f5f7;
-  --sidebar: #f0f0f2;
+  --surface-elevated: #f5f5f5;
+  --sidebar: #f0f0f0;
   --border: #e5e5e5;
-  --primary: #0071e3;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --muted: #aeaeb2;
-  --muted-foreground: #86868b;
-  --accent: #f0f0f2;
-  --accent-foreground: #1d1d1f;
-  --destructive: #ff3b30;
-  --radius: 1rem;
-  --shadow-card: 0 2px 12px rgba(0,0,0,0.08), 0 0 1px rgba(0,0,0,0.1);
-  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.08);
+  --muted: #a3a3a3;
+  --muted-foreground: #737373;
+  --accent: #f0f0f0;
+  --accent-foreground: #171717;
+  --destructive: #ef4444;
+  --radius: 0.75rem;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-elevated: 0 10px 30px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-glow: 0 0 0 3px rgba(37,99,235,0.15);
 }
 
 .dark {
-  --background: #000000;
-  --foreground: #f5f5f7;
-  --surface: #1c1c1e;
-  --surface-elevated: #3a3a3c;
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+  --surface: #1a1a1a;
+  --surface-elevated: #2a2a2a;
   --sidebar: #111111;
-  --border: #38383a;
-  --primary: #0a84ff;
+  --border: #333333;
+  --primary: #3b82f6;
   --primary-foreground: #ffffff;
-  --muted: #636366;
-  --muted-foreground: #98989d;
-  --accent: #2c2c2e;
-  --accent-foreground: #f5f5f7;
-  --destructive: #ff453a;
-  --shadow-card: 0 2px 12px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.05);
-  --shadow-elevated: 0 8px 32px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.05);
+  --muted: #525252;
+  --muted-foreground: #a3a3a3;
+  --accent: #262626;
+  --accent-foreground: #f5f5f5;
+  --destructive: #ef4444;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-elevated: 0 10px 30px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.2);
+  --shadow-glow: 0 0 0 3px rgba(59,130,246,0.25);
 }
 
 * {
@@ -55,11 +57,11 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.016em;
-  line-height: 1.5;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
   transition: background-color 0.2s, color 0.2s;
 }
 

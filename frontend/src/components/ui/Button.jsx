@@ -1,20 +1,28 @@
 import { cn } from '../../lib/utils';
 
-export function Button({ children, className, variant = 'primary', size = 'md', disabled, ...props }) {
-  const base = 'inline-flex items-center justify-center font-medium rounded-xl transition-all focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed';
-  
+export function Button({
+  children,
+  className,
+  variant = 'default',
+  size = 'md',
+  disabled,
+  ...props
+}) {
+  const base =
+    'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:opacity-40 disabled:pointer-events-none';
+
   const variants = {
-    primary: 'bg-[var(--primary)] text-white hover:opacity-85 active:opacity-75',
-    secondary: 'bg-[var(--surface-elevated)] text-[var(--foreground)] hover:bg-[var(--border)]',
+    default: 'bg-[var(--primary)] text-[var(--primary-foreground)] hover:brightness-110 active:brightness-95 shadow-sm',
+    secondary: 'bg-[var(--surface-elevated)] text-[var(--foreground)] border border-[var(--border)] hover:bg-[var(--accent)]',
     ghost: 'text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--surface-elevated)]',
-    destructive: 'bg-[var(--destructive)] text-white hover:opacity-85',
+    destructive: 'bg-[var(--destructive)] text-white hover:brightness-110 active:brightness-95',
   };
 
   const sizes = {
-    sm: 'px-4 py-2 text-sm',
-    md: 'px-5 py-2.5 text-sm',
-    lg: 'px-6 py-3 text-base',
-    icon: 'p-2.5',
+    sm: 'h-8 px-3 text-xs gap-1.5',
+    md: 'h-10 px-4 text-sm gap-2',
+    lg: 'h-12 px-6 text-base gap-2',
+    icon: 'h-9 w-9 p-0',
   };
 
   return (

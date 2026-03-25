@@ -16,7 +16,7 @@ export function StatusBar() {
     };
 
     poll();
-    const interval = setInterval(poll, 3000);
+    const interval = setInterval(poll, 5000);
     return () => clearInterval(interval);
   }, [setServerStatus]);
 
@@ -24,21 +24,25 @@ export function StatusBar() {
   const isStarting = serverStatus?.server_running && !serverStatus?.model_ready;
 
   return (
-    <div className="flex items-center gap-3 px-8 py-3.5 border-b border-[var(--border)] shrink-0">
-      <span className="text-lg font-bold text-[var(--foreground)]">small‑llm</span>
+    <div className="flex items-center gap-2.5 px-6 py-2.5 border-b border-[var(--border)] shrink-0 bg-[var(--background)]">
+      <span className="text-sm font-semibold text-[var(--foreground)]">small‑llm</span>
       <span className="text-[var(--border)]">·</span>
-      <span className="flex items-center gap-2 text-base text-[var(--muted-foreground)]">
-        <span className={`w-2.5 h-2.5 rounded-full ${isReady ? 'bg-emerald-500' : isStarting ? 'bg-amber-500 animate-pulse' : 'bg-[var(--muted)]'}`} />
+      <span className="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)]">
+        <span
+          className={`w-2 h-2 rounded-full shrink-0 ${
+            isReady ? 'bg-emerald-500' : isStarting ? 'bg-amber-500 animate-pulse' : 'bg-[var(--muted)]'
+          }`}
+        />
         {isReady
           ? 'Ready'
           : isStarting
-          ? (serverStatus?.status_message || 'Starting…')
-          : (serverStatus?.status_message || 'Connecting…')}
+            ? (serverStatus?.status_message || 'Starting…')
+            : (serverStatus?.status_message || 'Connecting…')}
       </span>
       {serverStatus?.model_name && (
         <>
           <span className="text-[var(--border)]">·</span>
-          <span className="font-mono text-[var(--muted)]">{serverStatus.model_name}</span>
+          <span className="font-mono text-xs text-[var(--muted)]">{serverStatus.model_name}</span>
         </>
       )}
     </div>

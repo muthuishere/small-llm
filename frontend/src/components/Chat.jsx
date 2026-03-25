@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { Send, Trash2, Copy } from 'lucide-react';
+import { Send, Trash2, Copy, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import useChatStore from '../store/chatStore';
 import { ChatMessage } from './ChatMessage';
@@ -12,7 +12,7 @@ export function Chat({ callbacks }) {
     isLoading, addMessage, clearMessages, setLoading,
   } = useChatStore();
   const [input, setInput] = useState('');
-  const bottomRef   = useRef(null);
+  const bottomRef = useRef(null);
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -27,6 +27,9 @@ export function Chat({ callbacks }) {
     if (!text || isLoading) return;
 
     setInput('');
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
     addMessage({ role: 'user', content: text, type: 'text' });
     setLoading(true);
 
@@ -81,16 +84,16 @@ export function Chat({ callbacks }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-8 py-5 border-b border-[var(--border)]">
-        <h2 className="text-lg font-bold text-[var(--foreground)]">{modeLabels[mode]}</h2>
-        <div className="flex gap-2">
+      <div className="flex items-center justify-between px-6 py-3.5 border-b border-[var(--border)] shrink-0 bg-[var(--background)]">
+        <span className="text-sm font-medium text-[var(--muted-foreground)]">{modeLabels[mode]}</span>
+        <div className="flex gap-1">
           {messages.length > 0 && (
             <>
               <Button variant="ghost" size="icon" onClick={handleCopyAll} title="Copy all">
-                <Copy size={18} />
+                <Copy size={15} />
               </Button>
               <Button variant="ghost" size="icon" onClick={clearMessages} title="Clear chat">
-                <Trash2 size={18} />
+                <Trash2 size={15} />
               </Button>
             </>
           )}
@@ -98,53 +101,63 @@ export function Chat({ callbacks }) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-8 md:px-12 lg:px-16 py-8 space-y-6">
-        {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <p className="text-2xl md:text-3xl font-bold text-[var(--foreground)] mb-3">Start a conversation</p>
-            <p className="text-lg text-[var(--muted-foreground)]">Send a message to begin</p>
-          </div>
-        )}
-        {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
-        ))}
-        {isLoading && (
-          <div className="flex gap-3">
-            <div className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-[var(--surface-elevated)]">
-              <span className="w-2 h-2 bg-[var(--muted)] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-2 h-2 bg-[var(--muted)] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-2 h-2 bg-[var(--muted)] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 lg:px-12 py-6">
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] flex items-center justify-center">
+              <MessageCircle size={20} className="text-[var(--muted)]" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold text-[var(--foreground)] mb-1">Start a conversation</p>
+              <p className="text-sm text-[var(--muted-foreground)]">Send a message to begin</p>
             </div>
           </div>
+        ) : (
+          <div className="max-w-3xl mx-auto space-y-5">
+            {messages.map((msg) => (
+              <ChatMessage key={msg.id} message={msg} />
+            ))}
+            {isLoading && (
+              <div className="flex gap-3">
+                <div className="flex items-center gap-1.5 px-4 py-3 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)]">
+                  <span className="w-1.5 h-1.5 bg-[var(--muted-foreground)] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1.5 h-1.5 bg-[var(--muted-foreground)] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 bg-[var(--muted-foreground)] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
         )}
-        <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
-      <div className="shrink-0 px-6 md:px-10 lg:px-14 pb-5 pt-3">
-        <div className="max-w-3xl mx-auto flex items-end gap-3 rounded-2xl border-2 border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-card)] focus-within:border-[var(--primary)] focus-within:shadow-[var(--shadow-elevated)] transition-all px-4 py-3">
-          <Textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-              e.target.style.height = 'auto';
-              e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-            }}
-            onKeyDown={handleKeyDown}
-            placeholder="Message…"
-            disabled={isLoading}
-            rows={1}
-            className="!border-0 !shadow-none !ring-0 !bg-transparent !p-0 text-base overflow-hidden flex-1"
-            style={{ minHeight: '28px', maxHeight: '120px' }}
-          />
-          <Button
-            onClick={handleSend}
-            disabled={!input.trim() || isLoading}
-            className="h-9 w-9 shrink-0 rounded-lg"
-          >
-            <Send size={16} />
-          </Button>
+      {/* Input area */}
+      <div className="shrink-0 px-4 md:px-8 lg:px-12 pb-4 pt-2 bg-[var(--background)]">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-end gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-[var(--shadow-card)] focus-within:border-[var(--primary)] focus-within:shadow-[var(--shadow-glow)] transition-all duration-150 px-4 py-3">
+            <Textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+                e.target.style.height = 'auto';
+                e.target.style.height = Math.min(e.target.scrollHeight, 140) + 'px';
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder="Message…"
+              disabled={isLoading}
+              rows={1}
+              className="!border-0 !shadow-none !ring-0 !bg-transparent !p-0 text-sm overflow-hidden flex-1 !outline-none"
+              style={{ minHeight: '24px', maxHeight: '140px' }}
+            />
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading}
+              className="shrink-0 w-8 h-8 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center hover:brightness-110 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+            >
+              <Send size={14} />
+            </button>
+          </div>
         </div>
       </div>
     </div>
